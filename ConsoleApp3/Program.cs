@@ -166,7 +166,7 @@ namespace ConsoleApp3
             double kLast = K(points[points.Length - 2], points[points.Length - 1]);
             double bLast = B(points[points.Length - 1], kLast);
 
-            for (int i = 0; i < points.Length - 1; i++)
+            for (int i = 0; i < points.Length - 2; i++)
             {
                 if (OnLine(points[i], points[points.Length - 1], kLast, bLast))
                 {
