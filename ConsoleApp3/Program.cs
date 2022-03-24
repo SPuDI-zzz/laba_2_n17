@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 /*Задание 3 №17
  * Дан массив из n точек на прямой. Найти такую точку из данного массива, сумма расстояний от которой до остальных его точек минимальна, и саму эту сумму
@@ -11,6 +12,7 @@ namespace ConsoleApp3
 {
     internal class Program
     {
+        
         //Вывод результата в консоли
         static void Main(string[] args)
         {
@@ -34,13 +36,17 @@ namespace ConsoleApp3
         static Point[] InputPoints(int count)
         {
             Point[] points = new Point[count];
+            //Random random = new Random();
+            
 
             for (int i = 1; i <= count; i++)
             {
                 Console.WriteLine("Ввод точки номер {0}:", i);
                 Console.Write("Введите X: ");
+                //int x = random.Next(10);
                 int x = CorrectIntInput();
                 Console.Write("Введите Y: ");
+                //int y = random.Next(10);
                 int y = CorrectIntInput();
                 points[i - 1] = new Point
                 {
@@ -98,10 +104,7 @@ namespace ConsoleApp3
             {
                 return 0;
             }
-            else
-            {
-                return (point1.Y - point2.Y) / (point1.X - point2.X);
-            }           
+            return (point1.Y - point2.Y) / (point1.X - point2.X);                      
         }
 
         //Функция B — свободный коэффициент возвращает некоторое число точки point и углового коэффициента k
@@ -115,7 +118,10 @@ namespace ConsoleApp3
         {
             double kNext = K(point1, point2);
             double bNext = B(point2, kNext);
-            
+            if (k == 0)
+            {
+                return kNext == k;
+            }
             return kNext == k && bNext == b;
         }
 
@@ -130,13 +136,25 @@ namespace ConsoleApp3
         {
             double sumMin = double.MaxValue;
             Point p1 = new Point();
-
+            var sw = new Stopwatch();
+            //sw.Start();
             //проверка для всех точек, кроме последней
             for (int i = 0; i < points.Length - 1; i++)
             {
                 double sumCur = 0;
                 double k = K(points[i], points[i + 1]);
                 double b = B(points[i + 1], k);
+
+                /*for (int j = 0; j < points.Length; j++)
+                {
+                    if (i != j)
+                    {
+                        if (OnLine(points[i], points[j], k, b))
+                        {
+                            sumCur += DistanceBetween(points[i], points[j]);
+                        }
+                    }
+                }*/
 
                 for (int j = i + 1; j < points.Length; j++)
                 {
@@ -159,27 +177,9 @@ namespace ConsoleApp3
                     sumMin = sumCur;
                     p1 = points[i];
                 }
-            }
-
-            //проверка для последней точки
-            double sumCurLast = 0;
-            double kLast = K(points[points.Length - 2], points[points.Length - 1]);
-            double bLast = B(points[points.Length - 1], kLast);
-
-            for (int i = 0; i < points.Length - 2; i++)
-            {
-                if (OnLine(points[i], points[points.Length - 1], kLast, bLast))
-                {
-                    sumCurLast += DistanceBetween(points[points.Length - 1], points[i]);
-                }
-            }
-
-            if (sumMin > sumCurLast && sumCurLast > 0)
-            {
-                sumMin = sumCurLast;
-                p1 = points[points.Length - 1];
-            }
-
+            }       
+            //sw.Stop();
+            //Console.WriteLine($"Time spent: {sw.Elapsed }");
             if (sumMin == double.MaxValue)
             {
                 return "Таких нет";
