@@ -16,7 +16,6 @@ namespace ConsoleApp3
         //Вывод результата в консоли
         static void Main(string[] args)
         {
-            //string answ = Task(InputPoints(InputCount()));
             Console.WriteLine("Ответ: {0}", Task(InputPoints(InputCount())));
             Console.ReadLine();
         }
@@ -36,8 +35,7 @@ namespace ConsoleApp3
         static Point[] InputPoints(int count)
         {
             Point[] points = new Point[count];
-            //Random random = new Random();
-            
+            //Random random = new Random();           
 
             for (int i = 1; i <= count; i++)
             {
@@ -120,9 +118,13 @@ namespace ConsoleApp3
             double bNext = B(point2, kNext);
             if (k == 0)
             {
-                return kNext == k;
+                if (point1.Y == point2.Y)
+                { 
+                    return Math.Abs(bNext - b) <= 1e-10;
+                }
+                return Math.Abs(kNext - k) <= 1e-10;
             }
-            return kNext == k && bNext == b;
+            return Math.Abs(kNext - k) <= 1e-10 && Math.Abs(bNext - b) <= 1e-10;
         }
 
         /* 
@@ -136,12 +138,14 @@ namespace ConsoleApp3
         {
             double sumMin = double.MaxValue;
             Point p1 = new Point();
-            var sw = new Stopwatch();
+            //var sw = new Stopwatch();
             //sw.Start();
-            //проверка для всех точек, кроме последней
+
+            //проверка для всех точек
             for (int i = 0; i < points.Length - 1; i++)
             {
-                double sumCur = 0;
+                //double sumCur = 0;
+                double sumCur = DistanceBetween(points[i], points[i+1]);
                 double k = K(points[i], points[i + 1]);
                 double b = B(points[i + 1], k);
 
@@ -156,7 +160,7 @@ namespace ConsoleApp3
                     }
                 }*/
 
-                for (int j = i + 1; j < points.Length; j++)
+                for (int j = i + 2; j < points.Length; j++)
                 {
                     if (OnLine(points[i], points[j], k, b))
                     {
@@ -177,9 +181,11 @@ namespace ConsoleApp3
                     sumMin = sumCur;
                     p1 = points[i];
                 }
-            }       
+            }
+            
             //sw.Stop();
             //Console.WriteLine($"Time spent: {sw.Elapsed }");
+
             if (sumMin == double.MaxValue)
             {
                 return "Таких нет";
