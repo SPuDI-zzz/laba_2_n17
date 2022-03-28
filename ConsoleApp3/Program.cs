@@ -102,7 +102,7 @@ namespace ConsoleApp3
             {
                 return 0;
             }
-            return (point1.Y - point2.Y) / (point1.X - point2.X);                      
+            return (double)(point1.Y - point2.Y) / (point1.X - point2.X);                      
         }
 
         //Функция B — свободный коэффициент возвращает некоторое число точки point и углового коэффициента k
@@ -127,6 +127,23 @@ namespace ConsoleApp3
             return Math.Abs(kNext - k) <= 1e-10 && Math.Abs(bNext - b) <= 1e-10;
         }
 
+        //Функция Check возвращает true, если все точки лежат на одной прямой
+        static bool Check(Point[] points)
+        {
+            double k = K(points[0], points[1]);
+            double b = B(points[1], k);
+
+            //проверка для всех точек
+            for (int i = 1; i < points.Length - 1; i++)
+            {
+                if (!OnLine(points[i], points[i + 1], k, b))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         /* 
          * Линейная функция. Если k и b у точек равны, то они лежат на одной прямой
          * y = k * x + b
@@ -141,59 +158,51 @@ namespace ConsoleApp3
             //var sw = new Stopwatch();
             //sw.Start();
 
-            //проверка для всех точек
-            for (int i = 0; i < points.Length - 1; i++)
+            if (Check(points))
             {
-                //double sumCur = 0;
-                double sumCur = DistanceBetween(points[i], points[i+1]);
-                double k = K(points[i], points[i + 1]);
-                double b = B(points[i + 1], k);
-
-                /*for (int j = 0; j < points.Length; j++)
+                //нахождение минимальной суммы длин точек
+                for (int i = 0; i < points.Length - 1; i++)
                 {
-                    if (i != j)
+                    double sumCur = DistanceBetween(points[i], points[i + 1]);
+                    double k = K(points[i], points[i + 1]);
+                    double b = B(points[i + 1], k);
+
+                    for (int j = i + 2; j < points.Length; j++)
                     {
                         if (OnLine(points[i], points[j], k, b))
                         {
                             sumCur += DistanceBetween(points[i], points[j]);
                         }
                     }
-                }*/
 
-                for (int j = i + 2; j < points.Length; j++)
-                {
-                    if (OnLine(points[i], points[j], k, b))
+                    for (int j = 0; j < i; j++)
                     {
-                        sumCur += DistanceBetween(points[i], points[j]);
+                        if (OnLine(points[i], points[j], k, b))
+                        {
+                            sumCur += DistanceBetween(points[i], points[j]);
+                        }
+                    }
+
+                    if (sumMin > sumCur && sumCur > 0)
+                    {
+                        sumMin = sumCur;
+                        p1 = points[i];
                     }
                 }
 
-                for (int j = 0; j < i; j++)
-                {
-                    if (OnLine(points[i], points[j], k, b))
-                    {
-                        sumCur += DistanceBetween(points[i], points[j]);
-                    }
-                }
+                //sw.Stop();
+                //Console.WriteLine($"Time spent: {sw.Elapsed }");
 
-                if (sumMin > sumCur && sumCur > 0)
+                if (sumMin == double.MaxValue)
                 {
-                    sumMin = sumCur;
-                    p1 = points[i];
+                    return "Таких нет";
+                }
+                else
+                {
+                    return $"Точка = {p1.ToStr()}, Сумма: {sumMin:f3}";
                 }
             }
-            
-            //sw.Stop();
-            //Console.WriteLine($"Time spent: {sw.Elapsed }");
-
-            if (sumMin == double.MaxValue)
-            {
-                return "Таких нет";
-            }
-            else
-            {
-                return $"Точка = {p1.ToStr()}, Сумма: {sumMin:f3}";
-            }
+            return "Некоректный ввод";
         }
     }
 }
