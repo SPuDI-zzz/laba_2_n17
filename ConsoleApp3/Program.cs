@@ -119,10 +119,10 @@ namespace ConsoleApp3
             if (k == 0)
             {
                 if (point1.Y == point2.Y)
-                { 
-                    return Math.Abs(bNext - b) <= 1e-10;
+                {
+                    return bNext == b;
                 }
-                return Math.Abs(kNext - k) <= 1e-10;
+                return kNext == k;
             }
             return Math.Abs(kNext - k) <= 1e-10 && Math.Abs(bNext - b) <= 1e-10;
         }
