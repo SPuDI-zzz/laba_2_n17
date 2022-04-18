@@ -59,18 +59,11 @@ namespace ConsoleApp3
         //Функция CorrectIntInput возвращает ввод корректного числа
         static int CorrectIntInput()
         {
-            bool isCorr;
             int res;
-
-            do
+            while (!int.TryParse(Console.ReadLine(), out res))
             {
-                isCorr = int.TryParse(Console.ReadLine(), out res);
-                if (!isCorr)
-                {
-                    Console.Write("Ошибка. Повторите ввод: ");
-                }
-            } while (!isCorr);
-
+                Console.Write("Ошибка. Повторите ввод: ");               
+            }
             return res;
         }
 
